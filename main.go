@@ -79,7 +79,14 @@ func main() {
 
 	ci95 := 1.96 * stdErr
 
+    //Output
+    fmt.Println("Monte Carlo Simultation Results")
     fmt.Println("Trials: ", nTrials)
+    fmt.Println("Workers: ", workers)
+    if(seed != 0) {
+        fmt.Println("Seed: ", seed)
+    }
+    fmt.Println("Time to run: ", time)
     fmt.Println("Mean Outcome: ", mean)
     fmt.Println("Std dev: ", stdDev)
     fmt.Println("95% CI: [", ci95, "]")
