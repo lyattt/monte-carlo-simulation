@@ -20,6 +20,40 @@ func simulateOneTrial() float64 {
     return value
 }
 
+// worker funcition
+func worker(id int, numTrials int, results chan<- float64) {
+	for i := 0; i < numTrials; i++ {
+		res := simulateOneTrial() 
+		results <- res            
+	}
+}
+
+// runs multiple trials conccurently and collects results
+func runConcurrentTrials(totalTrials int, workers int) []float64 {
+	results := make(chan float64)
+
+	trialsPerWorker := totalTrials / workers
+	remaining := totalTrials % workers
+
+	// launch goroutines
+	for w := 0; w < workers; w++ {
+		num := trialsPerWorker
+		if w == workers-1 {
+			num += remaining // last worker takes remainder
+		}
+		go worker(w, num, results)
+	}
+
+	// collect results from all workers
+	values := make([]float64, 0, totalTrials)
+	for i := 0; i < totalTrials; i++ {
+		val := <-results
+		values = append(values, val)
+	}
+
+	return values
+}
+
 func main() {
     nTrials := 10000
     results := make([]float64, nTrials)
