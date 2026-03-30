@@ -5,6 +5,9 @@ import (
     "fmt"
     "math/rand"
     "math"
+	"flag"
+	"time"
+
 )
 
 func simulateOneTrial() float64 {
@@ -20,17 +23,17 @@ func simulateOneTrial() float64 {
     return value
 }
 
-// worker funcition
+// worker function
 func worker(id int, numTrials int, results chan<- float64) {
 	for i := 0; i < numTrials; i++ {
 		res := simulateOneTrial() 
-		results <- res            
+		results <- res         
 	}
 }
 
 // runs multiple trials conccurently and collects results
 func runConcurrentTrials(totalTrials int, workers int) []float64 {
-	results := make(chan float64)
+	results := make(chan float64, totalTrials)
 
 	trialsPerWorker := totalTrials / workers
 	remaining := totalTrials % workers
@@ -55,40 +58,52 @@ func runConcurrentTrials(totalTrials int, workers int) []float64 {
 }
 
 func main() {
-    nTrials := 10000
-    results := make([]float64, nTrials)
+	trials := flag.Int("trials", 10000, "total number of simulations")
+	workers := flag.Int("workers", 4, "number of goroutines")
+	seed := flag.Int64("seed", 0, "random seed(optional)")
+	flag.Parse()
 
-    for i := 0; i < nTrials; i++ {
-		results[i] = simulateOneTrial()
+	var actualSeed int64 
+	if *seed == 0 {
+		actualSeed = time.Now().UnixNano()
+	} else {
+		actualSeed = *seed
 	}
+	rand.Seed(actualSeed)
+	start := time.Now()
+
+    results := runConcurrentTrials(*trials, *workers)
+
 
 	mean := 0.0
 	for _, v := range results {
 		mean += v
 	}
-	mean /= float64(nTrials)
+	mean /= float64(*trials)
 
 	var variance float64
 	for _, v := range results {
 		diff := v - mean
 		variance += diff * diff
 	}
-	variance /= float64(nTrials - 1)
-	stdDev := math.Sqrt(variance)
-	stdErr := stdDev / math.Sqrt(float64(nTrials))
+	variance /= float64(*trials - 1)
 
+	stdDev := math.Sqrt(variance)
+	stdErr := stdDev / math.Sqrt(float64(*trials))
 	ci95 := 1.96 * stdErr
 
     //Output
-    fmt.Println("Monte Carlo Simultation Results")
-    fmt.Println("Trials: ", nTrials)
-    fmt.Println("Workers: ", workers)
-    if(seed != 0) {
-        fmt.Println("Seed: ", seed)
+    fmt.Printf("Monte Carlo Simulation Results\n")
+    fmt.Printf("Trials: %d\n", *trials)
+    fmt.Printf("Workers: %d\n", *workers)
+
+    if(*seed != 0) {
+        fmt.Printf("Seed: %d\n", *seed)
     }
-    fmt.Println("Time to run: ", time)
-    fmt.Println("Mean Outcome: ", mean)
-    fmt.Println("Std dev: ", stdDev)
-    fmt.Println("95% CI: [", ci95, "]")
+	elapsed := time.Since(start)
+    fmt.Printf("Time to run: %.1f seconds\n", elapsed.Seconds())
+    fmt.Printf("Mean outcome: %.2f\n", mean)
+    fmt.Printf("Std dev: %.2f\n", stdDev)
+    fmt.Printf("95% CI: [%.2f, %.2f]\n", mean-ci95, mean+ci95)
 
 }
