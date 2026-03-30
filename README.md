@@ -11,3 +11,5 @@ Summary of chats answer: This represents compounding returns. Each day’s retur
    - [AI log](concurrent_ai_log.md)
 3. Aggregation
    - [AI log](aggregation_ai_log.md)
+4. Interface
+   - [AI log](UserInterface_ai_log.md)
