@@ -57,10 +57,12 @@ func simulateOneTrial() float64 {
    
    
    value := 100.0
+
    mu := 0.001
+
    sigma := 0.02
 
-   for i := 0; i < 252; i++ {
+   for i := 0; i < 252;  i++  {
 
 
       r := mu + sigma*rand.NormFloat6()
@@ -71,7 +73,6 @@ func simulateOneTrial() float64 {
 
    return value
 
-   
 }
 
 ## Extensions Attempted 
