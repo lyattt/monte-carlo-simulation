@@ -53,17 +53,25 @@ Std dev: 5.67
 ## Example Code for Benchmark Problem 
 
 
-func simulateOnetRIAL() float64 {
+func simulateOneTrial() float64 {
+   
+   
    value := 100.0
    mu := 0.001
    sigma := 0.02
 
    for i := 0; i < 252; i++ {
+
+
       r := mu + sigma*rand.NormFloat6()
       value = value * (1 + r)
+
+
    }
 
    return value
+
+   
 }
 
 ## Extensions Attempted 
