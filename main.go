@@ -183,7 +183,7 @@ func main() {
 		fmt.Printf("Seed:         %d\n", *seed)
 	}
 	elapsed := time.Since(start)
-	fmt.Printf("Time to run:  %.1f seconds\n", elapsed.Seconds())
+	fmt.Printf("Time to run:  %.1f milliseconds\n", elapsed.Milliseconds())
 	fmt.Printf("Mean outcome: %.2f\n", mean)
 	fmt.Printf("Std dev:      %.2f\n", stdDev)
 	fmt.Printf("95%% CI:       [%.2f, %.2f]\n", mean-ci95, mean+ci95)
