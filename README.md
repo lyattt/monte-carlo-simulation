@@ -27,12 +27,9 @@ Firstl install the required dependencies:
 
 go mod init montecarlo
 
-
 go get gonum.org/v1/plot
 
-
 go get gonum.org/v1/plot/plotter
-
 
 go get gonum.org/v1/plot/vg
 
