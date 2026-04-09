@@ -18,9 +18,17 @@ The engine is implemented in main.go and includes:
 -   A concurrent execution function using channels to collect results
 -   Statistical calculations (mean, standard deviation, and 95% confidence interval)
 -   A command-line interface for user input
+- Streaming progress output every 10,000 trials 
+- A histogram of final portfolio vvalues saved as a PNG using gonum/plot
 
 ## How to Run the program 
 
+Firstl install the required dependencies:
+
+go mod init montecarlo
+go get gonum.org/v1/plot
+go get gonum.org/v1/plot/plotter
+go get gonum.org/v1/plot/vg
 
 Run the program using:
 
@@ -79,13 +87,16 @@ func simulateOneTrial() float64 {
 ## Extensions Attempted 
 
 
-No additional extensions were implemented 
+ Streaming Output: The program reports progress every 10,000 trials without blocking the worker goroutines. This is done using an atomic counter that workers increment as they complete trials, and a separate goroutine that checks the counter every 100 milliseconds and prints a progress update when a new milestone is reached.
+
+
+Visualization: After all trials complete, the program generates a histogram of the final portfolio values using the gonum/plot library and saves it as portfolio_histogram.png in the project directory.
 
 
 ## AI Usage 
 
 
-ChatGPT was used as a learning and debugging tool to help implement the concurrent execution portion of the project. It provided guidance on using goroutines and channels, structuring worker functions, and handling common errors during development. All code was reviewed, tested, and integrated manually.
+ChatGPT and Claude was used as a learning and debugging tool to help implement the concurrent execution portion of the project. It provided guidance on using goroutines and channels, structuring worker functions, and handling common errors during development. All code was reviewed, tested, and integrated manually.
 
 
 ## Benefits of AI Use
@@ -94,6 +105,8 @@ ChatGPT was used as a learning and debugging tool to help implement the concurre
 -  Helped understand concurrency concepts in Go
 -  Assisted with debugging and resolving errors
 -  Provided guidance on structuring parallel execution
+- Explained how to use atomic operations for thread-safe progress tracking
+- Helped intergrate the gonum/plot library for visualization
 
 
 ## Limitations of AI Use 
